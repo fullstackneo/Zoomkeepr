@@ -1,4 +1,6 @@
 const express = require('express');
+
+const PORT = process.env.PORT || 3001;
 const app = express();
 const { animals } = require('./data/animals.json');
 
@@ -16,7 +18,7 @@ function filterByQuery(query, animalsArray) {
       personalityTraitsArray = query.personalityTraits;
     }
     console.log(personalityTraitsArray);
-    
+
     // Loop through each trait in the personalityTraits array:
     personalityTraitsArray.forEach(trait => {
       filteredResults = filteredResults.filter(animal => animal.personalityTraits.indexOf(trait) !== -1);
@@ -47,6 +49,6 @@ app.get('/api/animals', (req, res) => {
   res.send(results);
 });
 
-app.listen(3001, () => {
-  console.log('Server running at http:127.0.0.1:3001');
+app.listen(PORT, () => {
+  console.log(`Server running at http:127.0.0.1:${PORT}`);
 });
