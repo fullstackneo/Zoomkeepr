@@ -1,0 +1,22 @@
+{
+  "name": "zoomkeepr",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/fullstackneo/Zoomkeepr.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/fullstackneo/Zoomkeepr/issues"
+  },
+  "homepage": "https://github.com/fullstackneo/Zoomkeepr#readme",
+  "dependencies": {
+    "express": "^4.17.3"
+  }
+}
