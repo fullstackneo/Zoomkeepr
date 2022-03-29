@@ -2,6 +2,11 @@ const express = require('express');
 
 const PORT = process.env.PORT || 3001;
 const app = express();
+// parse incoming JSON data
+app.use(express.json());
+// parse incoming string or array data
+app.use(express.urlencoded({ extended: false}));
+
 const { animals } = require('./data/animals.json');
 
 function filterByQuery(query, animalsArray) {
@@ -63,6 +68,11 @@ app.get('/api/animals', (req, res) => {
   console.log(req.query);
   results = filterByQuery(req.query, results);
   res.send(results);
+});
+
+app.post('/api/animals', (req, res) => {
+  res.json(req.body);
+  console.log(req.body);
 });
 
 app.listen(PORT, () => {
