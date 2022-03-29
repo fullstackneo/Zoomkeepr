@@ -41,10 +41,26 @@ function filterByQuery(query, animalsArray) {
   return filteredResults;
 }
 
+function findById(id, animalsArray) {
+  const result = animalsArray.filter(animal => animal.id === id)[0];
+  return result;
+}
+
+app.get('/api/animals/:id', (req, res) => {
+  const result = findById(req.params.id, animals);
+  console.log(req.params);
+  console.log(req.query);
+
+  if (result) {
+    res.json(result);
+  } else {
+    res.sendStatus(404);
+  }
+});
+
 app.get('/api/animals', (req, res) => {
   let results = animals;
   console.log(req.query);
-
   results = filterByQuery(req.query, results);
   res.send(results);
 });
