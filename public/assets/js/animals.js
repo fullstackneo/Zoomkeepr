@@ -11,9 +11,7 @@ const printResults = resultArr => {
       <h4 class="text-primary">${name}</h4>
       <p>Species: ${species.substring(0, 1).toUpperCase() + species.substring(1)}<br/>
       Diet: ${diet.substring(0, 1).toUpperCase() + diet.substring(1)}<br/>
-      Personality Traits: ${personalityTraits
-        .map(trait => `${trait.substring(0, 1).toUpperCase() + trait.substring(1)}`)
-        .join(', ')}</p>
+      Personality Traits: ${personalityTraits.map(trait => `${trait.substring(0, 1).toUpperCase() + trait.substring(1)}`).join(', ')}</p>
     </div>
   </div>
     `;
@@ -27,10 +25,22 @@ const getAnimals = (formData = {}) => {
 
   Object.entries(formData).forEach(([key, value]) => {
     queryUrl += `${key}=${value}&`;
+    console.log(queryUrl);
   });
 
   console.log(queryUrl);
 
+  fetch(queryUrl)
+    .then(response => {
+      if (!response.ok) {
+        return alert('Error: ' + response.statusText);
+      }
+      return response.json();
+    })
+    .then(animalData => {
+      console.log(animalData);
+      printResults(animalData);
+    });
 };
 
 const handleGetAnimalsSubmit = event => {
@@ -49,16 +59,16 @@ const handleGetAnimalsSubmit = event => {
   }
 
   const personalityTraitArr = [];
-  const selectedTraits = $animalForm.querySelector('[name="personality"').selectedOptions;
+  const selectedTraits = $animalForm.querySelector('[name="personality"]').selectedOptions;
 
   for (let i = 0; i < selectedTraits.length; i += 1) {
     personalityTraitArr.push(selectedTraits[i].value);
   }
 
   const personalityTraits = personalityTraitArr.join(',');
-
+  console.log(personalityTraits);
   const animalObject = { diet, personalityTraits };
-
+  console.log(animalObject);
   getAnimals(animalObject);
 };
 

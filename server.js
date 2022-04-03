@@ -1,135 +1,25 @@
 const express = require('express');
-
 const PORT = process.env.PORT || 3001;
 const app = express();
-const fs = require('fs');
-const path = require('path');
+const apiRoutes = require('./routes/apiRoutes');
+const htmlRoutes = require('./routes/htmlRoutes');
 
-app.use(express.static('public'));
+
+app.use(express.static('./public'));
 // parse incoming JSON data
 app.use(express.json());
 // parse incoming string or array data
 app.use(express.urlencoded({ extended: false }));
 
-const { animals } = require('./data/animals.json');
+app.use('/api', apiRoutes);
+app.use('/', htmlRoutes);
 
-function filterByQuery(query, animalsArray) {
-  let personalityTraitsArray = [];
-  // Note that we save the animalsArray as filteredResults here:
-  let filteredResults = animalsArray;
 
-  if (query.personalityTraits) {
-    // Save personalityTraits as a dedicated array.
-    // If personalityTraits is a string, place it into a new array and save.
-    if (typeof query.personalityTraits === 'string') {
-      personalityTraitsArray = [query.personalityTraits];
-    } else {
-      personalityTraitsArray = query.personalityTraits;
-    }
-    console.log(personalityTraitsArray);
 
-    // Loop through each trait in the personalityTraits array:
-    personalityTraitsArray.forEach(trait => {
-      filteredResults = filteredResults.filter(animal => animal.personalityTraits.indexOf(trait) !== -1);
-    });
-  }
-  if (query.diet) {
-    filteredResults = filteredResults.filter(animal => animal.diet === query.diet);
-  }
-  if (query.species) {
-    filteredResults = filteredResults.filter(animal => animal.species === query.species);
-  }
-  if (query.name) {
-    filteredResults = filteredResults.filter(animal => animal.name === query.name);
-  }
+app.use('/api', apiRoutes);
+app.use('/', htmlRoutes);
 
-  if (query.personalityTraits) {
-    filteredResults = filteredResults.filter(animal => animal.personalityTraits.includes(query.personalityTraits));
-  }
 
-  return filteredResults;
-}
-
-function findById(id, animalsArray) {
-  const result = animalsArray.filter(animal => animal.id === id)[0];
-  return result;
-}
-
-function createNewAnimal(body, animalsArray) {
-  console.log(body);
-  // our function's main code will go here!
-  const animal = body;
-  animalsArray.push(animal);
-  fs.writeFileSync(path.join(__dirname, './data/animals.json'), JSON.stringify({ animals: animalsArray }, null, 2));
-
-  // return finished code to post route for response
-
-  return animal;
-}
-
-function validateAnimal(animal) {
-  if (!animal.name || typeof animal.name !== 'string') {
-    return false;
-  }
-  if (!animal.species || typeof animal.species !== 'string') {
-    return false;
-  }
-  if (!animal.diet || typeof animal.diet !== 'string') {
-    return false;
-  }
-  if (!animal.personalityTraits || !Array.isArray(animal.personalityTraits)) {
-    return false;
-  }
-  return true;
-}
-
-app.get('/api/animals/:id', (req, res) => {
-  const result = findById(req.params.id, animals);
-  console.log(req.params);
-  console.log(req.query);
-
-  if (result) {
-    res.json(result);
-  } else {
-    res.sendStatus(404);
-  }
-});
-
-app.get('/api/animals', (req, res) => {
-  let results = animals;
-  console.log(req.query);
-  results = filterByQuery(req.query, results);
-  res.send(results);
-});
-
-app.post('/api/animals', (req, res) => {
-  // set id based on what the next index of the array will be
-  req.body.id = animals.length;
-  // if any data in req.body is incorrect, send 400 error back
-  if (!validateAnimal(req.body)) {
-    res.status(400).send('The animal is not properly formatted.');
-  } else {
-    // add animal to json file and animals array in this function
-    const animal = createNewAnimal(req.body, animals);
-    res.json(animal);
-  }
-});
-
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, './public/index.html'));
-});
-
-app.get('/animals', (req, res) => {
-  res.sendFile(path.join(__dirname,'/public/animals.html'))
-})
-
-app.get('/zookeepers', (req, res) => {
-  res.sendFile(path.join(__dirname, './public/zookeepers.html'));
-});
-
-app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, './public/index.html'));
-});
 
 app.listen(PORT, () => {
   console.log(`Server running at http:127.0.0.1:${PORT}`);
