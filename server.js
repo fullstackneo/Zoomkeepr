@@ -14,13 +14,6 @@ app.use(express.urlencoded({ extended: false }));
 app.use('/api', apiRoutes);
 app.use('/', htmlRoutes);
 
-
-
-app.use('/api', apiRoutes);
-app.use('/', htmlRoutes);
-
-
-
 app.listen(PORT, () => {
   console.log(`Server running at http:127.0.0.1:${PORT}`);
 });
